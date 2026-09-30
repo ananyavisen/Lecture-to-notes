@@ -1,1 +1,1 @@
-"# Lecture Transcript to Smart Notes" 
+# Lecture Transcript to Smart Notes
