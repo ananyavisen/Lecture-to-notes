@@ -10,8 +10,6 @@ from generator import create_docx
 INPUT_DIR = Path("input")
 OUTPUT_DIR = Path("output")
 
-OUTPUT_FILE = OUTPUT_DIR / "smart_notes.docx"
-
 
 SUPPORTED_AUDIO = {
     ".mp3",
@@ -25,7 +23,10 @@ SUPPORTED_AUDIO = {
 
 def get_input_file():
     """
-    Find the first supported lecture file in the input directory.
+    Find an input lecture file.
+
+    For testing, if both DOCX and audio files exist,
+    prefer the audio file.
     """
 
     files = [
@@ -39,23 +40,24 @@ def get_input_file():
             "No lecture file found in the input directory."
         )
 
+    # Prefer audio for testing
     for file in files:
-
-        if file.suffix.lower() == ".docx":
-            return file
-
         if file.suffix.lower() in SUPPORTED_AUDIO:
             return file
 
+    # Otherwise use DOCX
+    for file in files:
+        if file.suffix.lower() == ".docx":
+            return file
+
     raise ValueError(
-        "Unsupported file type. "
-        "Please provide a .docx or supported audio file."
+        "No supported DOCX or audio file found."
     )
 
 
 def get_transcript(input_file):
     """
-    Convert the input file into plain transcript text.
+    Convert the input file into transcript text.
     """
 
     extension = input_file.suffix.lower()
@@ -146,11 +148,17 @@ def main():
         exist_ok=True
     )
 
+    # Create output name based on input file
+    output_file = (
+        OUTPUT_DIR
+        / f"{input_file.stem}_smart_notes.docx"
+    )
+
     print("\nCreating Smart Notes document...")
 
     create_docx(
         notes,
-        str(OUTPUT_FILE)
+        str(output_file)
     )
 
     # -----------------------------------
@@ -161,7 +169,7 @@ def main():
     print("SUCCESS")
     print("=" * 50)
 
-    print(f"Output: {OUTPUT_FILE}")
+    print(f"Output: {output_file}")
 
 
 if __name__ == "__main__":
