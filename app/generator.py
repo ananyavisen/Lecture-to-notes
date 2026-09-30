@@ -1,10 +1,10 @@
 from docx import Document
 from docx.shared import Pt, Inches
 from docx.enum.text import WD_ALIGN_PARAGRAPH
-
+import time
 
 def create_docx(notes, output_file):
-
+    start_time = time.perf_counter()
     document = Document()
 
     # -----------------------------
@@ -162,5 +162,10 @@ def create_docx(notes, output_file):
     # -----------------------------
 
     document.save(output_file)
+    end_time = time.perf_counter()
 
+    print(
+        f"DOCX generation time: "
+        f"{end_time - start_time:.4f} seconds"
+    )
     print(f"Smart notes saved to: {output_file}")

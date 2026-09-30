@@ -1,4 +1,5 @@
 import os
+import time
 
 from dotenv import load_dotenv
 from groq import Groq
@@ -13,6 +14,8 @@ client = Groq(
 
 def transcribe_audio(audio_path):
 
+    start_time = time.perf_counter()
+
     with open(audio_path, "rb") as audio_file:
 
         transcription = client.audio.transcriptions.create(
@@ -21,5 +24,11 @@ def transcribe_audio(audio_path):
             response_format="json",
             temperature=0.0
         )
+
+    end_time = time.perf_counter()
+
+    elapsed = end_time - start_time
+
+    print(f"Transcription time: {elapsed:.2f} seconds")
 
     return transcription.text

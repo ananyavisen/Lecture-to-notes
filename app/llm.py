@@ -1,6 +1,6 @@
 import os
 import json
-
+import time
 from dotenv import load_dotenv
 from groq import Groq
 
@@ -105,6 +105,7 @@ Use exactly this JSON structure:
 
 
 def generate_notes(transcript):
+    start_time = time.perf_counter()
     response = client.chat.completions.create(
         model="openai/gpt-oss-120b",
         temperature=0.2,
@@ -126,7 +127,16 @@ LECTURE TRANSCRIPT:
             }
         ]
     )
+    end_time = time.perf_counter()
+
+    elapsed = end_time - start_time
 
     content = response.choices[0].message.content
 
-    return json.loads(content)
+    notes = json.loads(content)
+
+    print(f"LLM generation time: {elapsed:.2f} seconds")
+    print(f"Input transcript length: {len(transcript):,} characters")
+    print(f"LLM output length: {len(content):,} characters")
+    
+    return notes
